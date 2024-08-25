@@ -1,0 +1,47 @@
+from flask import Flask, request, jsonify
+
+app = Flask(_name_)
+
+@app.route('/bfhl', methods=['POST'])
+def process_post_request():
+    data = request.get_json()
+    
+    # Extracting data from the request
+    full_name = data.get('full_name', '')
+    dob = data.get('dob', '')
+    college_email = data.get('college_email', '')
+    college_roll_number = data.get('college_roll_number', '')
+    input_array = data.get('input_array', [])
+    
+    # Creating user_id
+    user_id = f"{full_name.lower().replace(' ', '')}{dob.replace('-', '')}"
+    
+    # Separating numbers and alphabets
+    numbers = [x for x in input_array if isinstance(x, int)]
+    alphabets = [x for x in input_array if isinstance(x, str) and x.isalpha()]
+    
+    # Finding the highest lowercase alphabet
+    lowercase_alphabets = [x for x in alphabets if x.islower()]
+    highest_lowercase_alphabet = max(lowercase_alphabets) if lowercase_alphabets else None
+    
+    response = {
+        "is_success": True,
+        "user_id": user_id,
+        "email": college_email,
+        "roll_number": college_roll_number,
+        "numbers": numbers,
+        "alphabets": alphabets,
+        "highest_lowercase_alphabet": highest_lowercase_alphabet
+    }
+    
+    return jsonify(response)
+
+@app.route('/bfhl', methods=['GET'])
+def process_get_request():
+    response = {
+        "operation_code": 200
+    }
+    return jsonify(response)
+
+if _name_ == '_main_':
+    app.run(debug=True)
